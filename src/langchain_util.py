@@ -9,22 +9,32 @@ def num_tokens_by_tiktoken(text: str):
     return len(enc.encode(text))
 
 
-def init_langchain_model(llm: str, model_name: str, temperature: float = 0.0, max_retries=5, timeout=60, **kwargs):
     """
     Initialize a language model from the langchain library.
     :param llm: The LLM to use, e.g., 'openai', 'together'
     :param model_name: The model name to use, e.g., 'gpt-3.5-turbo'
     """
     if llm == 'openai':
-        # https://python.langchain.com/v0.1/docs/integrations/chat/openai/
-        from langchain_openai import ChatOpenAI
-        #assert model_name.startswith('gpt-')
-        # openai_api_base
-        api_key=os.environ.get("OPENAI_API_KEY")
-        base_url=os.environ.get("OPENAI_BASE_URL")
-        print (f"Creating ChatOpenAI with: model: {model_name}. API_KEY: {api_key}. BASE_URL: {base_url}.\n")
-        
-        return ChatOpenAI(api_key=api_key, base_url=base_url, model=model_name, temperature=temperature, max_retries=max_retries, timeout=timeout, **kwargs)
+        try:
+            # Get the API key and model name as exported environment parameters
+            api_key = os.environ.get("OPENAI_API_KEY")
+            base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
+            
+            # verbose check the creation parameters
+            print(f"Creating ChatOpenAI with: model: {model_name}, API_KEY: {api_key}, BASE_URL: {base_url}.\n")
+            
+            # Initialize the ChatOpenAI instance
+            model = ChatOpenAI(api_key=api_key, base_url=base_url, model=model_name, temperature=temperature, max_retries=max_retries, timeout=timeout, **kwargs)
+            
+            # Check if the model object is created correctly
+            if model and hasattr(model, 'model'):
+                print("ChatOpenAI model created successfully.\n")
+                return model
+            else:
+                raise ValueError("Failed to create ChatOpenAI model.")    
+        except Exception as e:
+            print(f"Error initializing ChatOpenAI: {e}\n")
+            return None
     elif llm == 'together':
         # https://python.langchain.com/v0.1/docs/integrations/chat/together/
         from langchain_together import ChatTogether
