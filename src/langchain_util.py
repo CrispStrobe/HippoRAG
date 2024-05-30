@@ -26,7 +26,7 @@ def init_langchain_model(llm: str, model_name: str, temperature: float = 0.0, ma
             model = ChatOpenAI(api_key=api_key, base_url=base_url, model=model_name, temperature=temperature, max_retries=max_retries, timeout=timeout, **kwargs)
             
             # Check if the model object is created correctly
-            if model and hasattr(model, 'model'):
+            if model: # and hasattr(model, 'model'):
                 print("ChatOpenAI model created successfully.\n")
                 return model
             else:
