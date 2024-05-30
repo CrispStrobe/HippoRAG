@@ -22,7 +22,7 @@ def init_langchain_model(llm: str, model_name: str, temperature: float = 0.0, ma
         # openai_api_base
         api_key=os.environ.get("OPENAI_API_KEY")
         base_url=os.environ.get("OPENAI_BASE_URL")
-        print (f"Creating ChatOpenAI with: model: {model_name}. API_KEY:. BASE_URL: .\n")
+        print (f"Creating ChatOpenAI with: model: {model_name}. API_KEY: {api_key}. BASE_URL: {base_url}.\n")
         
         return ChatOpenAI(api_key=api_key, base_url=base_url, model=model_name, temperature=temperature, max_retries=max_retries, timeout=timeout, **kwargs)
     elif llm == 'together':
